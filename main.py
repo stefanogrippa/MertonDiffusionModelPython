@@ -1,7 +1,9 @@
+# https://www.codearmo.com/python-tutorial/merton-jump-diffusion-model-python
+
 import matplotlib.pyplot as plt
+import numpy as np
 
 plt.style.use('ggplot')
-import numpy as np
 
 
 def merton_jump_paths(S, T, r, sigma, lam, m, v, steps, Npaths):
