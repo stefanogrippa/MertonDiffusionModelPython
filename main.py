@@ -25,7 +25,7 @@ m = 0  # meean of jump size
 v = 0.3  # standard deviation of jump
 lam = 1  # intensity of jump i.e. number of jumps per annum
 steps = 10000  # time steps
-Npaths = 1  # number of paths to simulate
+Npaths = 10  # number of paths to simulate
 sigma = 0.2  # annaul standard deviation , for weiner process
 
 j = merton_jump_paths(S, T, r, sigma, lam, m, v, steps, Npaths)
@@ -34,3 +34,4 @@ plt.plot(j)
 plt.xlabel('Days')
 plt.ylabel('Stock Price')
 plt.title('Jump Diffusion Process')
+plt.show()
