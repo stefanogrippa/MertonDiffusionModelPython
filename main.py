@@ -107,9 +107,10 @@ j = merton_jump_paths(S, T, R, Sigma, Lam, M, V, Steps, Npaths)  #generate jump 
 
 mcprice = np.maximum(j[-1]-K,0).mean() * np.exp(-R*T) # calculate value of call
 
-cf_price = merton_jump_call(S, K, T, R, Sigma, np.exp(M+V**2*0.5), V, Lam)
+# qui e' da sistemare !!!!
+# cf_price = merton_jump_call(S, K, T, R, Sigma, np.exp(M+V**2*0.5), V, Lam)
 
-print('Merton Price =', cf_price)
+# print('Merton Price =', cf_price)
 print('Monte Carlo Merton Price =', mcprice)
 print('Black Scholes Price =', bs_call(S,K,T,R, Sigma))
 
@@ -120,16 +121,16 @@ print('Black Scholes Price =', bs_call(S,K,T,R, Sigma))
 strikes = np.arange(50, 150, 1)
 
 # qui e' da sistemare !!!!
-mjd_prices = merton_jump_call(S, strikes, T, R, Sigma, M, V, Lam)
-merton_ivs = [implied_vol(c, S, k, T, R) for c,k in zip(mjd_prices, strikes)]
+# mjd_prices = merton_jump_call(S, strikes, T, R, Sigma, M, V, Lam)
+# merton_ivs = [implied_vol(c, S, k, T, R) for c,k in zip(mjd_prices, strikes)]
 
-plt.plot(strikes, merton_ivs, label='IV Smile')
-plt.xlabel('Strike')
-plt.ylabel('Implied Volatility')
-plt.axvline(S, color='black', linestyle='dashed', linewidth=2, label="Spot")
-plt.title('MJD Volatility Smile')
-plt.legend()
-plt.show()
+# plt.plot(strikes, merton_ivs, label='IV Smile')
+# plt.xlabel('Strike')
+# plt.ylabel('Implied Volatility')
+# plt.axvline(S, color='black', linestyle='dashed', linewidth=2, label="Spot")
+# plt.title('MJD Volatility Smile')
+# plt.legend()
+# plt.show()
 
 # calibration
 df = pd.read_csv('https://raw.githubusercontent.com/codearmo/data/master/calls_calib_example.csv')
