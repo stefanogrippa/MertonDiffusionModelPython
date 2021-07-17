@@ -23,10 +23,7 @@ def merton_jump_paths(s, t, r, sigma, lam, m, v, steps, nofpaths):
     return np.exp(geo + poi_rv) * s
 
 
-
-
-
-S = 100 # current stock price
+S = 100  # current stock price
 T = 1  # time to maturity
 R = 0.02  # risk free rate
 M = 0  # mean of jump size
@@ -61,26 +58,26 @@ def bs_put(s, k, t, r, sigma):
     return k * np.exp(-r * t) * N(-d2) - s * N(-d1)
 
 
-def merton_jump_call(s, Kappa, t, r, sigma, m, v, lam):
+def merton_jump_call(s, kappa, t, r, sigma, m, v, lam):
     p = 0
     for k in range(40):
         r_k = r - lam * (m - 1) + (k * np.log(m)) / t
         sigma_k = np.sqrt(sigma ** 2 + (k * v ** 2) / t)
         k_fact = np.math.factorial(k)
-        p += (np.exp(-m * lam * t) * (m * lam * t) ** k / k_fact) * bs_call(s, Kappa, t, r_k, sigma_k)
+        p += (np.exp(-m * lam * t) * (m * lam * t) ** k / k_fact) * bs_call(s, kappa, t, r_k, sigma_k)
 
     return p
 
 
-def merton_jump_put(s, k, t, r, sigma, m, v, lam):
+def merton_jump_put(s, kappa, t, r, sigma, m, v, lam):
     p = 0  # price of option
     for k in range(40):
         r_k = r - lam * (m - 1) + (k * np.log(m)) / T
         sigma_k = np.sqrt(sigma ** 2 + (k * v ** 2) / T)
         k_fact = np.math.factorial(k)  #
-        p += (np.exp(-m * lam * T) * (m * lam * T) ** k / k_fact) \
-             * bs_put(s, k, t, r_k, sigma_k)
+        p += (np.exp(-m * lam * T) * (m * lam * T) ** k / k_fact) * bs_put(s, kappa, t, r_k, sigma_k)
     return p
+
 
 # https://www.codearmo.com/python-tutorial/calculating-volatility-smile
 def implied_vol(opt_value, s, k, t, r, type_='call'):
