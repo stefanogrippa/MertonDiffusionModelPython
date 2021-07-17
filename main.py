@@ -61,13 +61,13 @@ def bs_put(s, k, t, r, sigma):
     return k * np.exp(-r * t) * N(-d2) - s * N(-d1)
 
 
-def merton_jump_call(s, k, t, r, sigma, m, v, lam):
+def merton_jump_call(s, Kappa, t, r, sigma, m, v, lam):
     p = 0
     for k in range(40):
-        r_k = r - lam * (m - 1) + (k * np.log(m)) / T
-        sigma_k = np.sqrt(sigma ** 2 + (k * v ** 2) / T)
+        r_k = r - lam * (m - 1) + (k * np.log(m)) / t
+        sigma_k = np.sqrt(sigma ** 2 + (k * v ** 2) / t)
         k_fact = np.math.factorial(k)
-        p += (np.exp(-m * lam * T) * (m * lam * T) ** k / k_fact) * bs_call(s, k, t, r_k, sigma_k)
+        p += (np.exp(-m * lam * t) * (m * lam * t) ** k / k_fact) * bs_call(s, Kappa, t, r_k, sigma_k)
 
     return p
 
@@ -107,8 +107,8 @@ j = merton_jump_paths(S, T, R, Sigma, Lam, M, V, Steps, Npaths)  #generate jump 
 
 mcprice = np.maximum(j[-1]-K,0).mean() * np.exp(-R*T) # calculate value of call
 
-# qui e' da sistemare !!!!
-# cf_price = merton_jump_call(S, K, T, R, Sigma, np.exp(M+V**2*0.5), V, Lam)
+
+cf_price = merton_jump_call(S, K, T, R, Sigma, np.exp(M+V**2*0.5), V, Lam)
 
 # print('Merton Price =', cf_price)
 print('Monte Carlo Merton Price =', mcprice)
@@ -120,17 +120,17 @@ print('Black Scholes Price =', bs_call(S,K,T,R, Sigma))
 
 strikes = np.arange(50, 150, 1)
 
-# qui e' da sistemare !!!!
-# mjd_prices = merton_jump_call(S, strikes, T, R, Sigma, M, V, Lam)
-# merton_ivs = [implied_vol(c, S, k, T, R) for c,k in zip(mjd_prices, strikes)]
 
-# plt.plot(strikes, merton_ivs, label='IV Smile')
-# plt.xlabel('Strike')
-# plt.ylabel('Implied Volatility')
-# plt.axvline(S, color='black', linestyle='dashed', linewidth=2, label="Spot")
-# plt.title('MJD Volatility Smile')
-# plt.legend()
-# plt.show()
+mjd_prices = merton_jump_call(S, strikes, T, R, Sigma, M, V, Lam)
+merton_ivs = [implied_vol(c, S, k, T, R) for c,k in zip(mjd_prices, strikes)]
+
+plt.plot(strikes, merton_ivs, label='IV Smile')
+plt.xlabel('Strike')
+plt.ylabel('Implied Volatility')
+plt.axvline(S, color='black', linestyle='dashed', linewidth=2, label="Spot")
+plt.title('MJD Volatility Smile')
+plt.legend()
+plt.show()
 
 # calibration
 df = pd.read_csv('https://raw.githubusercontent.com/codearmo/data/master/calls_calib_example.csv')
