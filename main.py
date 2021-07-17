@@ -100,9 +100,9 @@ def implied_vol(opt_value, s, k, t, r, type_='call'):
 
 K = 100
 np.random.seed(3)
-j = merton_jump_paths(S, T, R, Sigma, Lam, M, V, Steps, Npaths)  #generate jump diffusion paths
+j = merton_jump_paths(S, T, R, Sigma, Lam, M, V, Steps, Npaths)  # generate jump diffusion paths
 
-mcprice = np.maximum(j[-1]-K,0).mean() * np.exp(-R*T) # calculate value of call
+mcprice = np.maximum(j[-1]-K,0).mean() * np.exp(-R*T)  # calculate value of call
 
 
 cf_price = merton_jump_call(S, K, T, R, Sigma, np.exp(M+V**2*0.5), V, Lam)
@@ -149,11 +149,11 @@ bounds = ((0.01, np.inf), (0.01, 2), (1e-5, np.inf) , (0, 5))  #bounds as descri
 strikes = df.Strike.values
 prices = df.Midpoint.values
 # minimize non definito
-res = minimize(optimal_params, method='SLSQP',  x0=x0, args=(prices, strikes), bounds = bounds, tol=1e-20, options={"maxiter":1000})
-sigt = res.x[0]
-mt = res.x[1]
-vt = res.x[2]
-lamt = res.x[3]
+Res = minimize(optimal_params, method='SLSQP',  x0=x0, args=(prices, strikes), bounds = bounds, tol=1e-20, options={"maxiter":1000})
+sigt = Res.x[0]
+mt = Res.x[1]
+vt = Res.x[2]
+lamt = Res.x[3]
 
 print('Calibrated Volatlity = ', sigt)
 print('Calibrated Jump Mean = ', mt)
