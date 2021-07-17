@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import norm
 from scipy.optimize import minimize_scalar
+import pandas as pd
+# import time
+from scipy.optimize import minimize
 
 plt.style.use('ggplot')
 
@@ -100,7 +103,7 @@ def implied_vol(opt_value, s, k, t, r, type_='call'):
 
 K = 100
 np.random.seed(3)
-j = merton_jump_paths(S, T, R, Sigma, Lam, M, V, Steps, Npaths) #generate jump diffusion paths
+j = merton_jump_paths(S, T, R, Sigma, Lam, M, V, Steps, Npaths)  #generate jump diffusion paths
 
 mcprice = np.maximum(j[-1]-K,0).mean() * np.exp(-R*T) # calculate value of call
 
@@ -114,8 +117,9 @@ print('Black Scholes Price =', bs_call(S,K,T,R, Sigma))
 #Monte Carlo Merton Price = 14.597509592911369
 #Black Scholes Price = 8.916037278572539
 
-strikes = np.arange(50,150,1)
+strikes = np.arange(50, 150, 1)
 
+# qui e' da sistemare !!!!
 mjd_prices = merton_jump_call(S, strikes, T, R, Sigma, M, V, Lam)
 merton_ivs = [implied_vol(c, S, k, T, R) for c,k in zip(mjd_prices, strikes)]
 
@@ -126,3 +130,48 @@ plt.axvline(S, color='black', linestyle='dashed', linewidth=2, label="Spot")
 plt.title('MJD Volatility Smile')
 plt.legend()
 plt.show()
+
+# calibration
+df = pd.read_csv('https://raw.githubusercontent.com/codearmo/data/master/calls_calib_example.csv')
+
+print(df.head(10))
+
+def optimal_params(x, mkt_prices, strikes):
+    candidate_prices = merton_jump_call(S, strikes, T, R,
+                                        sigma=x[0], m= x[1] ,
+                                        v=x[2],lam= x[3])
+    return np.linalg.norm(mkt_prices - candidate_prices, 2)
+
+
+T = df['T'].values[0]
+S = df.F.values[0]
+R = 0
+x0 = [0.15, 1, 0.1, 1]  # initial guess for algorithm
+bounds = ((0.01, np.inf), (0.01, 2), (1e-5, np.inf) , (0, 5))  #bounds as described above
+strikes = df.Strike.values
+prices = df.Midpoint.values
+# minimize non definito
+res = minimize(optimal_params, method='SLSQP',  x0=x0, args=(prices, strikes), bounds = bounds, tol=1e-20, options={"maxiter":1000})
+sigt = res.x[0]
+mt = res.x[1]
+vt = res.x[2]
+lamt = res.x[3]
+
+print('Calibrated Volatlity = ', sigt)
+print('Calibrated Jump Mean = ', mt)
+print('Calibrated Jump Std = ', vt)
+print('Calibrated intensity = ', lamt)
+
+#Calibrated Volatlity =  0.06489478237064618
+#Calibrated Jump Mean =  0.8789051095314648
+#Calibrated Jump Std =  0.1542041201811455
+#Calibrated intensity =  0.9722952134238365
+
+df['least_sq_V'] = merton_jump_call(S, df.Strike, df['T'], 0, sigt, mt, vt, lamt)
+
+plt.scatter(df.Strike, df.Midpoint,label= 'Observed Prices')
+plt.plot(df.Strike, df.least_sq_V, color='black',label= 'Fitted Prices')
+plt.legend()
+plt.xlabel('Strike')
+plt.ylabel('Value in $')
+plt.title('Merton Model Optimal Params')
