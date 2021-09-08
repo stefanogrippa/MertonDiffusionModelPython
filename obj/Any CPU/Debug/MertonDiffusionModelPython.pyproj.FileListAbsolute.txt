@@ -1,0 +1,3 @@
+C:\Users\stefa\OneDrive\Documenti\GitHub\MertonDiffusionModelPython\obj\Any CPU\Debug\MertonDiffusionModelPython.pyproj.CoreCompileInputs.cache
+C:\Users\stefa\OneDrive\Documenti\GitHub\MertonDiffusionModelPython\bin\Microsoft.PythonTools.WebRole.dll
+C:\Users\stefa\OneDrive\Documenti\GitHub\MertonDiffusionModelPython\bin\wfastcgi.py

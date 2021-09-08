@@ -7,6 +7,7 @@ import numpy as np
 from scipy.stats import norm
 from scipy.optimize import minimize_scalar
 import pandas as pd
+import seaborn as sns
 # import time
 from scipy.optimize import minimize
 
@@ -42,7 +43,8 @@ j = merton_jump_paths(S, T, R, Sigma, Lam, M, V, Steps, Npaths)
 plt.plot(j)
 plt.xlabel('Days')
 plt.ylabel('Stock Price')
-plt.title('Jump Diffusion Process')
+Plottitle = 'Jump Diffusion Process for ' + str(Npaths) + ' paths'
+plt.title(Plottitle)
 plt.show()
 
 
@@ -130,6 +132,8 @@ plt.xlabel('Strike')
 plt.ylabel('Implied Volatility')
 plt.axvline(S, color='black', linestyle='dashed', linewidth=2, label="Spot")
 plt.title('MJD Volatility Smile')
+
+
 plt.legend()
 plt.show()
 
@@ -236,7 +240,7 @@ prices_neg  = generate_heston_paths(S, T, r, kappa, theta,
 gbm_bench = S*np.exp( np.random.normal((r - v_0/2)*T ,
                                 np.sqrt(theta)*np.sqrt(T), size=paths))
 
-import seaborn as sns
+
 
 fig, ax = plt.subplots()
 
@@ -275,7 +279,7 @@ theta = 0.04
 v_0 = 0.04
 xi = 0.6
 r = 0.05
-S = 100
+S = 100       
 paths = 3
 steps = 10000
 T = 1
